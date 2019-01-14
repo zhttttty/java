@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../zhizhuotec-common-boot/zhizhuotec-common-boot.iml" filepath="$PROJECT_DIR$/../zhizhuotec-common-boot/zhizhuotec-common-boot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/zhizhuotec-config-boot.iml" filepath="$PROJECT_DIR$/.idea/zhizhuotec-config-boot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manage-boot.iml" filepath="$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manage-boot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manager-boot-entity/zhizhuotec-manager-boot-entity.iml" filepath="$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manager-boot-entity/zhizhuotec-manager-boot-entity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manager-boot-mapper/zhizhuotec-manager-boot-mapper.iml" filepath="$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manager-boot-mapper/zhizhuotec-manager-boot-mapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manager-boot-service/zhizhuotec-manager-boot-service.iml" filepath="$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manager-boot-service/zhizhuotec-manager-boot-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manager-boot-web/zhizhuotec-manager-boot-web.iml" filepath="$PROJECT_DIR$/../zhizhuotec-manage-boot/zhizhuotec-manager-boot-web/zhizhuotec-manager-boot-web.iml" />
+    </modules>
+  </component>
+</project>

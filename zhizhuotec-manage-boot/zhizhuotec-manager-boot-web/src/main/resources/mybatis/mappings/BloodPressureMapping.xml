@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhizhuotec.mapper.BloodPressureMapper">
+
+	<select id="findById" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) FROM health_blood_pressure WHERE id = #{id}
+	</select>	
+	
+	<select id="findByUserId" parameterType="BloodPressure" resultType="BloodPressure">
+		SELECT * FROM health_blood_pressure WHERE user_id =#{userId}
+	</select>
+	
+	<select id="findByDate" parameterType="Map" resultType="BloodPressure">
+		SELECT * FROM health_blood_pressure
+		WHERE user_id = #{uId}
+		AND dates IN
+		<foreach collection="data" index="index" item="item" separator="," open="(" close=")">
+            #{item.dates}
+        </foreach>
+	</select>
+	
+	<select id="findByDays" resultType="BloodPressure">
+		SELECT times,results,dates FROM health_blood_pressure WHERE dates BETWEEN #{begin} AND #{end}
+		AND user_id=#{userId} ORDER BY dates;
+	</select>
+	
+	<select id="updateByBatch" parameterType="Map" resultType="String">
+		SET @dates := null;
+        UPDATE health_blood_pressure
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="times =case" suffix="end,">
+	            <foreach collection="data" item="item" index="index">
+					when dates=#{item.dates} then #{item.times}
+	            </foreach>
+            </trim>
+            <trim prefix="results =case" suffix="end,">
+	            <foreach collection="data" item="item" index="index">
+					when dates=#{item.dates} then #{item.results}
+	            </foreach>
+            </trim>
+        </trim>
+        WHERE user_id=#{uId} AND dates IN
+		<foreach collection="data" index="index" item="item" separator="," open="(" close=")">
+            #{item.dates}
+        </foreach>
+        AND (SELECT @dates := CONCAT_WS(',', dates, @dates));
+        SELECT @dates;
+    </select>
+    
+    <insert id="insertByBatch" parameterType="Map">
+        INSERT INTO health_blood_pressure (id,userId,times,results,dates)
+        VALUES
+        <foreach collection="data" item="item" index="index" separator=",">
+            ((SELECT REPLACE(UUID(),'-','')),#{uId},#{item.times},#{item.results},#{item.dates})
+        </foreach>
+    </insert>
+    
+    <select id="download" resultType="BloodPressure">
+		SELECT times,results,dates FROM health_blood_pressure
+		WHERE user_id = #{userId} AND dates >= #{dates}
+		ORDER BY dates;
+	</select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhizhuotec.mapper.FamilyMapper">
+
+	<select id="getNotificationMsg" parameterType="List" resultType="Map">
+		SELECT
+		a.id,a.avatar,
+		b.identifier,
+		c.nick_name
+		FROM personal_user a
+		LEFT JOIN personal_user_auths b ON (a.id = b.user_id)
+		LEFT JOIN personal_user_setting c ON (a.id = c.user_id)
+		WHERE a.id IN
+		<foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+	</select>
+
+	<select id="getFamilyMsg" parameterType="List" resultType="Map">
+		SELECT
+		a.id,a.avatar,
+		b.identifier,
+		c.nick_name,c.age,c.stature,c.weight,c.sex,c.birthday
+		FROM personal_user a
+		LEFT JOIN personal_user_auths b ON (a.id = b.user_id)
+		LEFT JOIN personal_user_setting c ON (a.id = c.user_id)
+		WHERE a.id IN
+		<foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+	</select>
+	
+	<select id="findFamilyById" parameterType="String" resultType="Family">
+		SELECT * FROM health_family WHERE user_id = #{userId}
+	</select>
+	
+	<insert id="insertFamily" parameterType="Family">
+		INSERT INTO health_family(id,user_id,family_list)
+		VALUES(#{id},#{userId},#{familyList});
+	</insert>
+	
+	<update id="updateFamily" parameterType="Family">
+		UPDATE health_family SET family_list = #{familyList} WHERE user_id= #{userId}
+	</update>
+</mapper>

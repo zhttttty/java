@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhizhuotec.mapper.BackstageMapper">
+
+	<select id="login" parameterType="UserAuths" resultType="Map">
+		SELECT a.id,a.avatar,a.role,a.status,
+		b.identity_type,b.identifier,b.credential,b.verified,
+		c.nick_name
+		FROM personal_user a
+		LEFT JOIN personal_user_auths b ON (a.id = b.user_id)
+		LEFT JOIN personal_user_setting c ON (a.id = c.user_id)
+		WHERE b.identifier = #{identifier} AND b.identity_type = #{identityType}
+	</select>
+
+	<update id="loginIp" parameterType="UserAuths">
+		UPDATE personal_user_auths SET login_time = #{loginTime},login_ip = #{loginIp} WHERE user_id = #{id}
+	</update>
+	
+	<select id="getMsgFromUId" parameterType="String" resultType="Map">
+		SELECT a.id,a.role,a.status,
+		b.identity_type,b.identifier,b.verified
+		FROM personal_user a
+		LEFT JOIN personal_user_auths b ON (a.id = b.userId)
+		WHERE a.id = #{uId}
+	</select>
+	
+	<select id="getMsgFromIdentifier" parameterType="UserAuths" resultType="Map">
+		SELECT a.id,a.role,a.status,
+		b.verified
+		FROM personal_user a
+		LEFT JOIN personal_user_auths b ON (a.id = b.user_id)
+		WHERE b.identifier = #{identifier} AND b.identity_type = #{identityType}
+	</select>
+	
+	<select id="findByUserInfo" parameterType="Map" resultMap="userInfo">
+		SELECT a.role,a.status,
+		b.identifier,b.login_ip,b.register_time,
+		c.nick_name,c.age,c.stature,c.weight,c.sex,c.device_status
+		FROM personal_user a
+		LEFT JOIN personal_user_auths b ON (a.id = b.user_id)
+		LEFT JOIN personal_user_setting c ON (a.id = c.user_id)
+		<where>
+			<if test="role!=null">AND a.role = #{role}</if>
+			<if test="status!=null">AND a.status = #{status}</if>
+			<if test="identifier!=null">AND b.identifier = #{identifier}</if>
+			<if test="registerTime!=null">AND b.register_time = #{registerTime}</if>
+			<if test="nickName!=null">AND c.nick_name = #{nickName}</if>
+			<if test="age!=null">AND
+				<foreach collection="age" item="item" index="idx" open="(" separator="or" close=")">
+                	c.age BETWEEN #{item.min} AND #{item.max}
+            	</foreach>
+			</if>
+			<if test="stature!=null">AND
+				<foreach collection="stature" item="item" index="idx" open="(" separator="or" close=")">
+                	c.stature BETWEEN #{item.min} AND #{item.max}
+            	</foreach>
+			</if>
+			<if test="weight!=null">AND
+				<foreach collection="weight" item="item" index="idx" open="(" separator="or" close=")">
+                	c.weight BETWEEN #{item.min} AND #{item.max}
+            	</foreach>
+			</if>
+			<if test="sex!=null">AND c.sex = #{sex}</if>
+			<if test="deviceStatus!=null">AND c.device_status = #{deviceStatus}</if>
+		</where>
+		ORDER BY b.register_time DESC
+	</select>
+    
+    <resultMap type="User" id="userInfo">
+    	<id property="id" column="id"/>
+		<result property="role" column="role"/>
+		<result property="status" column="status"/>
+		<collection property="userAuths" ofType="UserAuths">
+		    <id property="id" column="id"/>
+			<result property="identifier" column="identifier"/>
+			<result property="loginIp" column="login_ip"/>
+			<result property="registerTime" column="register_time"/>
+		</collection>
+		<collection property="userSetting" ofType="UserSetting">
+		    <id property="id" column="id"/>
+			<result property="nickName" column="nick_name"/>
+			<result property="age" column="age"/>
+			<result property="stature" column="stature"/>
+			<result property="weight" column="weight"/>
+			<result property="sex" column="sex"/>
+			<result property="deviceStatus" column="device_status"/>
+		</collection>
+	</resultMap>
+	
+	<update id="settingInfo" parameterType="Map">
+		UPDATE personal_user a
+		LEFT JOIN personal_user_auths b ON (a.id = b.user_id)
+		LEFT JOIN personal_user_setting c ON (a.id = c.user_id)
+		<trim prefix="set" suffixOverrides=",">
+			<if test="null!=role">a.role=#{role},</if>
+			<if test="null!=status">a.status=#{status},</if>
+			<if test="null!=psw and ''!=psw">b.credential=#{psw},</if>
+			<if test="null!=nickName">c.nick_name=#{nickName},</if>
+			<if test="null!=stature">c.stature=#{stature},</if>
+			<if test="null!=weight">c.weight=#{weight},</if>
+		</trim>
+		<where>
+			<if test="null!=identifier">b.identifier=#{identifier}</if>
+		</where>
+	</update>
+	
+	<select id="infoDetails" parameterType="String" resultType="Map">
+		SELECT b.identifier,c.nick_name,c.device_status,c.remark
+		FROM personal_user_auths b
+		LEFT JOIN personal_user_setting c ON (b.user_id = c.user_id)
+		<where>
+			<if test="null!=identifier">b.identifier=#{identifier}</if>
+		</where>
+	</select>
+	
+	<update id="setRemark" parameterType="Map">
+		UPDATE personal_user_auths b
+		LEFT JOIN personal_user_setting c ON (b.user_id = c.user_id)
+		<trim prefix="set" suffixOverrides=",">
+			<if test="null!=remark">c.remark=#{remark},</if>
+			<if test="null!=deviceStatus">c.device_status=#{deviceStatus},</if>
+		</trim>
+		<where>
+			<if test="null!=identifier">b.identifier=#{identifier}</if>
+		</where>
+	</update>
+</mapper>
